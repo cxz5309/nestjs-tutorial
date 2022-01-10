@@ -6,14 +6,14 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 
 @Injectable()
 export class MoviesService {
-  private movies : Movie[] = [];
+  private movies: Movie[] = [];
 
   getAll(): Movie[] {
     return this.movies;
   }
 
-  getOne(id: number): Movie{
-    const movie = this.movies.find(movie => movie.id === +id);
+  getOne(id: number): Movie {
+    const movie = this.movies.find((movie) => movie.id === +id);
     if (!movie) {
       throw new NotFoundException(`Movie with ID ${id} not found.`);
     }
@@ -22,7 +22,7 @@ export class MoviesService {
 
   deleteOne(id: number) {
     this.getOne(id);
-    this.movies = this.movies.filter(movie => movie.id !== +id);
+    this.movies = this.movies.filter((movie) => movie.id !== +id);
   }
 
   create(movieData: CreateMovieDto) {
@@ -30,12 +30,12 @@ export class MoviesService {
       id: this.movies.length + 1,
       ...movieData,
     });
-    return movieData; 
+    return movieData;
   }
 
   update(id: number, updateData: UpdateMovieDto) {
     const movie = this.getOne(id);
     this.deleteOne(id);
-    this.movies.push({...movie, ...updateData})
+    this.movies.push({ ...movie, ...updateData });
   }
 }

@@ -6,7 +6,7 @@ import { AppModule } from './../src/app.module';
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -19,17 +19,11 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('Welcole to my Movie ID');
+      .expect('Welcome to my Movie API');
   });
 
   describe('/movies', () => {
-    it('/movies (GET)', () => {
-      return request(app.getHttpServer())
-        .get('/movies')
-        .expect(200)
-        .expect([{ id: 1 }]);
-    });
-    it('POST', () => {
+    it('POST 201', () => {
       return request(app.getHttpServer())
         .post('/movies')
         .send({
@@ -39,16 +33,48 @@ describe('AppController (e2e)', () => {
         })
         .expect(201);
     });
+    it('/movies (GET)', () => {
+      return request(app.getHttpServer())
+        .get('/movies')
+        .expect([{ id: 1, title: 'Test', year: 2000, genres: ['test'] }])
+        .expect(200);
+    });
     it('DELETE', () => {
       return request(app.getHttpServer()).delete('/movies').expect(404);
     });
   });
 
   describe('/movies/:id', () => {
+    it('POST 201', () => {
+      return request(app.getHttpServer())
+        .post('/movies')
+        .send({
+          title: 'Test',
+          year: 2000,
+          genres: ['test'],
+        })
+        .expect(201);
+    });
     it('GET 200', () => {
       return request(app.getHttpServer()).get('/movies/1').expect(200);
     });
-    it('DELETE');
-    it('PATCH');
+    it('GET 404', () => {
+      return request(app.getHttpServer()).get('/movies/999').expect(404);
+    });
+    it('PATCH 200', () => {
+      return request(app.getHttpServer())
+        .patch('/movies/1')
+        .send({ title: 'Updated Test' })
+        .expect(200);
+    });
+    it('PATCH 404', () => {
+      return request(app.getHttpServer())
+        .patch('/movies/999')
+        .send({ title: 'Updated Test' })
+        .expect(404);
+    });
+    it('DELETE 200', () => {
+      return request(app.getHttpServer()).delete('/movies/1').expect(200);
+    });
   });
 });
